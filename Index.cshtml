@@ -1,0 +1,507 @@
+﻿@model Pollit.Site.ViewModels.PollView
+@using Pollit.Data;
+@using System.Web.Mvc;
+@{
+    ViewBag.Title = Model.Name;
+
+    var userPersonalPageName = ViewBag.UserPersonalPageName;
+    var overallratings = ViewBag.OverallRatings ?? 0;
+    var overallreviews = ViewBag.OverallReviews ?? 0;
+    string video = ViewBag.pollvid;
+    if (video == null)
+    { }
+    else
+    {
+        string vid = video.Substring(video.IndexOf('=') + 1);
+        var code = "//www.youtube.com/embed/" + vid;
+
+        //  var code = "https://i.ytimg.com/vi/" + vid+"/hqdefault.jpg";
+        ViewBag.code = code;
+    }
+    var code1 = ViewBag.code;
+
+    if (Model.PollImage.Contains("http"))
+    {
+        ViewData["img"] = string.Empty;
+
+    }
+    else
+    {
+        ViewData["img"] = "/Images/pollImages/";
+    }
+}
+@section Meta {
+
+    <meta property="og:site_name" content="Poll It" />
+    <meta property="og:url" content="@Request.Url.AbsoluteUri" />
+    <meta property="og:title" content="@Html.DisplayFor(model => model.Name)" />
+    @*<meta property="og:description" content="@Html.Raw(Model.Desc)" />*@
+
+
+
+    <meta property="og:image" content="/Images/pollImages/@Model.PollImage" />
+
+}
+@*Claim Poll call - Ducktale - Vikram*@
+<script type="text/javascript">
+    function ClaimPage() {
+        var PollID = $("[data-poll]").data("poll");
+        $.ajax({
+            url: "/ClaimPage",
+            type: "POST",
+            dataType: "json",
+            data: { pollID: PollID },
+            success: function (response) {
+                if (response != null && response.success) {
+                    alert(response.responseText);
+                } else {
+                    alert(response.responseText);
+                }
+            },
+            error: function (response) {
+                alert("error while claiming page!");  //
+            }
+
+            }
+        )
+
+    };
+</script>
+<style>
+    .stArrow span {
+        height: 22px !important;
+    }
+
+    .stButton span span {
+        height: 22px !important;
+    }
+
+    .img-wrap {
+        height: 245px !important;
+    }
+    /*SHow Rating text on right place*/
+    #poll-instructions {
+        margin-top: -15px !important;
+    }
+
+    .btn-claim-page {
+        height: initial;
+    }
+
+    .hidden-item {
+        visibility: hidden;
+    }
+
+    .show-item {
+        visibility: visible;
+    }
+</style>
+<section id="main-content">
+    <div class="poll-page-header">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="col-lg-12" style="margin-top:-27px;">
+                    @Html.HiddenFor(model => model.Id, new { @data_poll = Model.Id })
+                    <h3>
+                        <span class="custum-memphisfontbold"> @Html.DisplayFor(model => model.Name)</span> <br /> <span style="font-family: klavika">
+
+                            @overallratings
+
+                            Bars /
+                            @overallreviews
+
+
+                            Reviews
+                        </span>
+                    </h3>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <table>
+                            <tr>
+                                <td colspan="3">
+                                    <a onclick="SaveBookmark()" class="btnboolmark">Bookmark</a>
+
+                                </td>
+                                <td>
+                                    <a id="lnkReport">Report</a>
+                                </td>
+
+
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <span id="status"></span>
+                                </td>
+                            </tr>
+                        </table>
+
+
+
+
+                        <div id="frmSendReport"></div>
+                        <div id="divLoading" style="display:none;text-align:center">
+                            <img src="~/Images/spinner.gif">
+                        </div>
+                        <div id="descSection" style="display:none">
+                            <input id="pollId" name="pollId" type="hidden" value="@Model.Linkable"><textarea class="form-control" id="reportDesc" name="reportDesc" cols="65" rows="5" style="width:420px;" placeholder="Reason for Reporting"></textarea>  <br />
+                            <input id="create-poll-button" class="btn btn-warning" type="submit" value="Send" onclick="return DefaultEditOnComplete();" />
+                        </div>
+
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="poll-page" data-poll="@Model.Linkable">
+        <div class="container-fluid">
+            <div class="row-fluid">
+
+                <div class="col-lg-6 col-md-6 col-sm-6 poll-description">
+                    <div>
+
+                        @*<a href="#" id="poll-img" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">superuser</a>*@
+
+
+
+                        @*@if (userPersonalPageName != null)
+                            {
+                                <a href="/PersonalView?PageName=@userPersonalPageName.PageName">@userPersonalPageName.PageName</a>
+                            }
+                            else
+                            {
+                                <div style="height: 35px;">
+                                    <a>@WebSecurity.CurrentUserName</a>
+
+                                        <button type="button" class="btn btn-info btn-claim-page @(ViewBag.IsAuthenticated ? "show-item":"hidden-item")" onclick="ClaimPage(); return false;">Claim Poll</button>
+                                </div>
+                            }*@
+                        @*To Show Poll Belongs to user name and Claim place - Ducktale - Vikram*@
+                        <div style="height: 35px;">
+                            <a class="@(ViewBag.PollBelongsTo!=null || ViewBag.PollBelongsTo!="" ? "show-item":"hidden-item")" style="cursor: pointer;">@ViewBag.PollBelongsTo</a>
+                            <a class="@(ViewBag.IsAuthenticated ? "show-item":"hidden-item")" style="cursor: pointer;" onclick="ClaimPage(); return false;">Claim this place</a>
+                        </div>
+
+                        @*<div>
+                                <h4 class="custum-memphisfontbold"><b>@Html.Raw(Model.Name)</b></h4>
+
+                            </div>*@
+
+                        @if (string.IsNullOrEmpty(Model.PollImage))
+                        {
+                            <a href="#" id="divImage">
+                                <div class="img-wrap">
+                                    <img style="max-width: 100%; vertical-align: sub;width:100%;max-height:254px" src="@ViewData["img"]@(Model.Category.Name + ".jpg")" />
+                                </div>
+                            </a>
+                            <div class="clear-both"></div><br />
+
+                        }
+                        else if (string.IsNullOrEmpty(Model.video))
+                        {
+                            <a href="#" id="divImage">
+                                <div class="img-wrap">
+                                    <img style="max-width: 100%; vertical-align: sub;width:100%;max-height:254px" src="@ViewData["img"]@(Model.Category.Name + ".jpg")" />
+                                </div>
+                            </a>
+                            <div class="clear-both"></div><br />
+
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(code1))
+                            {
+                                <a href="#" id="divImage">
+                                    <div class="img-wrap">
+                                        <img style="max-width: 100%; vertical-align: sub;width:100%;max-height:254px" src="@ViewData["img"]@(Model.Category.Name + ".jpg")" />
+                                    </div>
+                                </a>
+                                <div class="clear-both"></div><br />
+                            }
+                        }
+                        @*Code Commented Just to show default*@
+                        @*@if (string.IsNullOrEmpty(Model.PollImage))
+                            {
+                                if (!string.IsNullOrEmpty(code1))
+                                {
+                                    <div class="img-wrap">
+                                        <iframe style="width:100%;height:100%"
+                                                src="@code1"
+                                                frameborder="0"></iframe>
+
+                                    </div>
+                                }
+                            }
+                            else if (string.IsNullOrEmpty(Model.video))
+                            {
+                                <a href="#" id="divImage">   <div class="img-wrap"><img style="max-width: 100%; vertical-align: sub;width:100%;max-height:400px" src="@ViewData["img"]@(!string.IsNullOrEmpty(Model.PollImage)?Model.PollImage:Model.Category.Name+".jpg")" /></div></a>
+                                <div class="clear-both"></div><br />
+
+                            }
+                            else
+                            {
+                                if (!string.IsNullOrEmpty(code1))
+                                {
+                                    <div class="img-wrap">
+                                        <iframe width="435"
+                                                height="250"
+                                                src="@code1"
+                                                frameborder="0"></iframe>
+
+                                    </div>
+                                    <a href="#" id="divImage">   <div class="img-wrap"><img style="max-width: 100%; vertical-align: sub;width:100%;max-height:400px" src="@ViewData["img"]@(!string.IsNullOrEmpty(Model.PollImage)?Model.PollImage:Model.Category.Name+".jpg")" /></div></a>
+                                    <div class="clear-both"></div><br />
+                                }
+                            }*@
+
+
+                        @*@if (!string.IsNullOrEmpty(code1))
+                            {
+                                <div class="img-wrap">
+                                    <iframe width="435"
+                                            height="250"
+                                            src="@code1"
+                                            frameborder="0"></iframe>
+
+                                </div>
+                            }*@
+
+                    </div>
+
+                    @*@if (!string.IsNullOrEmpty(Model.Desc))
+                        {
+                            <div>
+                                <h4 class="custum-memphisfontmedium">@Html.Raw(Model.Desc)</h4>
+
+                            </div>
+                        }*@
+                    @if (!string.IsNullOrEmpty(Model.Location))
+                    {
+                        <div>
+                            <h5>@Html.Raw(Model.Location)</h5>
+
+                        </div>
+                    }
+
+                    <div id="share">
+
+                        <div id="fb-root"></div>
+                        <script>
+                            (function (d, s, id) {
+                                var js, fjs = d.getElementsByTagName(s)[0];
+                                if (d.getElementById(id)) return;
+                                js = d.createElement(s); js.id = id;
+                                js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=414056358733306&version=v2.0";
+                                fjs.parentNode.insertBefore(js, fjs);
+                            }(document, 'script', 'facebook-jssdk'));
+                        </script>
+
+
+                        <div style="display:none;" class="fb-share-button" data-href="@Request.Url.AbsoluteUri"></div>
+
+                        <span class='st_facebook_hcount' displaytext='Facebook' style="height:30px"></span>
+                        <span class='st_twitter_hcount' displaytext='Tweet'></span>
+
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 poll-description-wrap">
+                    <div class="col-lg-6" id="poll-instructions">
+                        <h4>Rating</h4><p style="font-family:'Times New Roman'">Rollover bars, then click to rate. Static graph represents overall rating.</p>
+                    </div>
+                    <div class="row">
+                        @Html.Partial("_Rating", Model)
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="poll-reviews-create" style="margin-top:4px; margin-left:30px;">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="col-lg-12"><h4>Leave Feedback</h4></div>
+                </div>
+                <div class="row-fluid">
+
+
+
+                    @Html.Partial("_CreateReview", new Pollit.Data.Review())
+
+
+                    <br />
+
+
+                    @using (Html.BeginForm("FilterComment", "Poll", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="col-lg-12">
+                            <div class="col-lg-4">
+                                <h4 class="pull-left">Search By Rating:</h4>
+                            </div>
+                            <div class="col-lg-4 form-group">
+
+
+                                <select name="rating" id="rating" class="form-control">
+                                    <option>All Reveiw</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+
+                                </select>
+
+                            </div>
+                            <div class="col-lg-2 form-group">
+                                @* <button type="button" class="btn btn-info pull-right" onclick="Search(); return false;">Search</button>*@
+
+                            </div>
+
+
+                        </div>
+
+                    }
+
+                    <br />
+                    <br />
+                    <div id="div-reviewgrid">
+
+                        @Html.Partial("_ReviewList", Model)
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+    @*<div class="modal fade" id="showImageModel" style="display:none">
+            <div class="modal-dialog" style="width: 500px">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <input type="button" class="btn btn-default pull-right" value="X" id="btnClose" />
+                            <img style="max-width: 100%; vertical-align:  sub;width:100%;max-height:400px" id="divImage" src="@ViewData["img"]@(!string.IsNullOrEmpty(Model.PollImage)?Model.PollImage:Model.Category.Name+".jpg")" /><br />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+
+</section>
+
+@section scripts
+{
+    @if (ViewBag.Editable)
+    {
+        @Scripts.Render("~/bundles/editjs")
+        @Styles.Render("~/bundles/editcss")
+    }
+
+    <script type="text/javascript">var switchTo5x = true;</script>
+    <script type="text/javascript" src="//w.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript">stLight.options({ publisher: "ur-c6829532-9d4a-9003-d95e-de25f3009851", doNotHash: false, doNotCopy: false, hashAddressBar: false });</script>
+
+    <script type="text/javascript">
+
+        $(function () {
+            $("#lnkReport").click(function () {
+                if ($("#descSection").is(":visible"))
+                    $("#descSection").fadeOut(500);
+                else
+                    $("#descSection").fadeIn(500);
+            });
+        });
+
+        function DefaultEditOnComplete() {
+            var pollid = $("[data-poll]").data("poll");
+            $("#lnkReport").trigger("click");
+            $.post('/polls/SendReport', { reportDesc: $('#reportDesc').val(), pollId: pollid }, function (response) {
+
+                var status = response.status;
+                if (status) {
+                    $("#frmSendReport").html('Report sent successfully.').css({ "color": "green" });
+                    $('#reportDesc').val('');
+                }
+                else {
+                    $("#frmSendReport").html('Error. Report not sent.').css({ "color": "red" });;
+                }
+            });
+
+            return false;
+
+
+        }
+
+
+        $("#divImage").click(function () {
+
+            $('#showImageModel').modal('show');
+        });
+        $("#btnClose").click(function () {
+
+            $('#showImageModel').modal('hide');
+        });
+
+        function SaveBookmark() {
+
+            var pollid = $("[data-poll]").data("poll");
+
+            if (pollid != null && pollid.length > 0) {
+                $.post("/poll/SaveBookmarks", { pollid: pollid }, function (data) {
+
+                    $("#status").html(data);
+
+                });
+            }
+        };
+
+
+
+    </script>
+    <script>
+        function Search() {
+            var pollid = $("[data-poll]").data("poll");
+            var rating = $("#rating").val();
+            var date = $("#date").val();
+            $.post("/FilterComment/" + pollid, { rating: rating, date: date }, function (data) {
+                console.log(data)
+                $("#div-reviewgrid").html(data);
+
+
+            });
+        }
+
+        $("#rating").change(function () {
+            Search();
+        });
+
+
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $(".jumper").on("click", function (e) {
+
+                e.preventDefault();
+
+                $("body, html").animate({
+                    scrollTop: $($(this).attr('href')).offset().top
+                }, 300);
+
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            $("#datepicker-13").datepicker();
+            $("#datepicker-13").datepicker("show");
+        });
+    </script>
+}
+
+<div id="myreplies"></div>
