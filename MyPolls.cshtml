@@ -1,0 +1,320 @@
+﻿@using Pollit.Site.ViewModels;
+@using Pollit.Data;
+@{
+    ViewBag.Title = "My Polls";
+}
+
+<link href="~/Content/PollView.css" rel="stylesheet" />
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>My Polls</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1 class="heading">My Polls</h1>
+        <div class="inner-wrapper">
+            <ul class="tabs clearfix" data-tabgroup="first-tab-group">
+                <li><a href="#tab1" class="active">Name</a></li>
+                <li><a href="#tab2">Poll Ratings</a></li>
+                <li><a href="#tab3">Bookmarks</a></li>
+                <li><a href="#tab4">Message</a></li>
+            </ul>
+            <section id="first-tab-group" class="tabgroup">
+                <div id="tab1" class="tab-content">
+                    @{
+                        List<UserPoll> pollListname = ViewBag.MyPollListName;
+                    }
+
+                    @if (pollListname != null && pollListname.Count > 0)
+                    {
+                        foreach (var itemname in pollListname)
+                        {
+                            <div class="tab-content-inner">
+                                <h2>@itemname.Name@*<span><a href="#" id="myBtn">1</a></span>*@</h2>
+                                @*<p>@itemname.UserRating Bars</p>*@
+                                <p>
+                                    <a href="/p/edit?Id=@itemname.Id" class="yellow-button button"> Edit</a>
+                                    <a href="#" class="orange-button button"> Reviews</a>
+                                    <a href="#" class="red-button button"> Delete</a>
+                                </p>
+                            </div>
+                        }
+                    }
+                </div>
+                <div id="tab2" class="tab-content">
+                    @{
+                        List<UserPoll> pollListrating = ViewBag.MyPollListRating;
+                    }
+
+                    @if (pollListrating != null && pollListrating.Count > 0)
+                    {
+                        foreach (var itemrating in pollListrating)
+                        {
+                            <div class="tab-content-inner">
+                                <h2>@itemrating.Name</h2>
+                                <div style="margin: 0 auto;width:10%">
+                                    <img src="/images/ratings/@itemrating.UserRating-bars-only.png" style="height: 25px;width: 25px;margin-top: 5px;">
+                                    <p style="width: 105px;padding-top: 0px;margin-top: -25px;">Bars</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <div id="tab3" class="tab-content">
+                    @{
+                        List<UserPoll> bookmark = ViewBag.MyBookmark;
+                    }
+
+                    @if (bookmark != null && bookmark.Count > 0)
+                    {
+                        foreach (var bookmarkitem in bookmark)
+                        {
+                            <h2>@bookmarkitem.Name</h2>
+                        }
+                    }
+                    <p></p>
+                </div>
+                <div id="tab4" class="tab-content">
+
+                    @{
+                        List<UserPoll> pollList = ViewBag.MyPollList;
+                    }
+
+                    @if (pollList != null && pollList.Count > 0)
+                    {
+                        foreach (var item in pollList)
+                        {
+                            <div class="tab-content-inner">
+                                <div style="width: 78%;">
+                                    <span style="border: 1px solid #da5d48; margin-top: 7px; padding: 5px 10px;float: right;" onclick="GetPollMessages(this); return false;" data-assigned-id="@item.Id">
+                                        @item.MessageCount
+                                    </span>
+                                </div>
+                                <h2>@item.Name</h2>
+                            </div>
+                        }
+                    }
+
+                </div>
+
+            </section>
+        </div>
+    </div>
+
+    <!-- popup -->
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <!--span class="close">&times;</span-->
+            <h2 class="popup-heading">Chocolate Cake</h2>
+            <h3 class="popup-sub-heading">test2016 replied to your review</h3>
+            <div id="slider">
+                <a href="#" class="control_next"><img src="images/right-icon.png"></a>
+                <a href="#" class="control_prev"><img src="images/left-icon.png"></a>
+                <ul>
+                    <li>
+                        <div class="review-part">
+                            <div class="left-part">
+                                <img src="images/rating.png">
+                                <h4 class="rate-star">Five</h4>
+                                <p class="rate-name">BARS</p>
+                            </div>
+                            <div class="right-part">
+                                <p>test2016 6/29/2016</p>
+                                <h3>Such a great deal! I am sharing with all my friends! <a href="#" class="comment-reply">Reply</a></h3>
+                            </div>
+                        </div>
+                        <div class="review-comment">
+                            <div class="inner-review-comment">
+                                <div class="left-part">
+                                    <img src="images/rating.png">
+
+                                </div>
+                                <div class="right-part">
+                                    <p>test2016 6/29/2016</p>
+                                    <h3>Such a great deal! I am sharing with all my friends! <a href="#" class="comment-reply">Reply</a></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="review-part">
+                            <div class="left-part">
+                                <img src="images/rating.png">
+                                <h4 class="rate-star">Five</h4>
+                                <p class="rate-name">BARS</p>
+                            </div>
+                            <div class="right-part">
+                                <p>test2016 6/29/2016</p>
+                                <h3>Such a great deal! I am sharing with all my friends! <a href="#" class="comment-reply">Reply</a></h3>
+                            </div>
+                        </div>
+                        <div class="review-comment">
+                            <div class="inner-review-comment">
+                                <div class="left-part">
+                                    <img src="images/rating.png">
+
+                                </div>
+                                <div class="right-part">
+                                    <p>test2016 6/29/2016</p>
+                                    <h3>Such a great deal! I am sharing with all my friends! <a href="#" class="comment-reply">Reply</a></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="review-part">
+
+                            <div class="left-part">
+                                <img src="images/rating.png">
+                                <h4 class="rate-star">Five</h4>
+                                <p class="rate-name">BARS</p>
+                            </div>
+                            <div class="right-part">
+                                <p>test2016 6/29/2016</p>
+                                <h3>Such a great deal! I am sharing with all my friends! <a href="#" class="comment-reply">Reply</a></h3>
+                            </div>
+                        </div>
+                        <div class="review-comment">
+                            <div class="inner-review-comment">
+                                <div class="left-part">
+                                    <img src="images/rating.png">
+                                </div>
+                                <div class="right-part">
+                                    <p>test2016 6/29/2016</p>
+                                    <h3>Such a great deal! I am sharing with all my friends! <a href="#" class="comment-reply">Reply</a></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <!-- popup end -->
+
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+    <script type="text/javascript">
+        $('.tabgroup > div').hide();
+        $('.tabgroup > div:first-of-type').show();
+        $('.tabs a').click(function (e) {
+            e.preventDefault();
+            var $this = $(this),
+                tabgroup = '#' + $this.parents('.tabs').data('tabgroup'),
+                others = $this.closest('li').siblings().children('a'),
+                target = $this.attr('href');
+            others.removeClass('active');
+            $this.addClass('active');
+            $(tabgroup).children('div').hide();
+            $(target).show();
+
+        })
+    </script>
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById('myModal');
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        /*span.onclick = function() {
+            modal.style.display = "none";
+        }*/
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+    <!-- slider js --->
+    <script type="text/javascript">
+
+        var slideCount = $('#slider ul li').length;
+        var slideWidth = $('#slider ul li').width();
+        var slideHeight = $('#slider ul li').height();
+        var sliderUlWidth = slideCount * slideWidth;
+
+        $('#slider').css({ width: slideWidth, height: slideHeight });
+
+        $('#slider ul').css({ width: sliderUlWidth, marginLeft: -slideWidth });
+
+        $('#slider ul li:last-child').prependTo('#slider ul');
+
+        function moveLeft() {
+            $('#slider ul').animate({
+                left: +slideWidth
+            }, 100, function () {
+                $('#slider ul li:last-child').prependTo('#slider ul');
+                $('#slider ul').css('left', '');
+            });
+        };
+
+        function moveRight() {
+            $('#slider ul').animate({
+                left: -slideWidth
+            }, 100, function () {
+                $('#slider ul li:first-child').appendTo('#slider ul');
+                $('#slider ul').css('left', '');
+            });
+        };
+
+        $('a.control_prev').click(function () {
+            moveLeft();
+        });
+
+        $('a.control_next').click(function () {
+            moveRight();
+        });
+
+
+
+    </script>
+    <script type="text/javascript">
+        function GetPollMessages(PollData) {
+            var PollID = $(PollData).data('assigned-id');
+            $.ajax({
+                url: "/GetPollReplys",
+                type: "POST",
+                dataType: "json",
+                data: { pollID: PollID },
+                success: function (response) {
+                    //if (response != null && response.success) {
+                    //    alert(response.responseText);
+                    //} else {
+                    //    alert(response.responseText);
+                    //}
+                },
+                error: function (response) {
+                    alert("error while claiming page!");  //
+                }
+
+            }
+        )
+
+    };
+    </script>
+
+</body>
+</html>
